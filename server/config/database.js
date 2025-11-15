@@ -5,36 +5,60 @@ dotenv.config();
 
 const { Pool } = pg;
 
-// Check if DATABASE_URL is set
-if (!process.env.DATABASE_URL) {
+// Check if DATABASE_URL is set (only exit in non-serverless environments)
+if (!process.env.DATABASE_URL && !process.env.VERCEL) {
   console.error('ERROR: DATABASE_URL is not set in environment variables');
   console.error('Please create a .env file in the server directory with:');
   console.error('DATABASE_URL=postgresql://...');
   process.exit(1);
 }
 
-console.log('Connecting to database...');
-console.log('Database URL:', process.env.DATABASE_URL.replace(/:[^:@]+@/, ':****@')); // Hide password
+// In Vercel, we'll handle missing DATABASE_URL gracefully
+if (!process.env.DATABASE_URL && process.env.VERCEL) {
+  console.warn('WARNING: DATABASE_URL is not set. Database operations will fail.');
+}
 
-const pool = new Pool({
+if (process.env.DATABASE_URL) {
+  console.log('Connecting to database...');
+  console.log('Database URL:', process.env.DATABASE_URL.replace(/:[^:@]+@/, ':****@')); // Hide password
+}
+
+// Optimized pool configuration for Vercel serverless functions
+// Only create pool if DATABASE_URL exists
+const pool = process.env.DATABASE_URL ? new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL.includes('sslmode=require') ? {
+  ssl: process.env.DATABASE_URL?.includes('sslmode=require') || process.env.DATABASE_URL?.includes('neon.tech') ? {
     rejectUnauthorized: false
-  } : false
-});
+  } : false,
+  // Optimize for serverless: smaller pool, faster timeouts
+  max: process.env.VERCEL ? 2 : 10, // Smaller pool for serverless
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
+  // Allow connections to be reused
+  allowExitOnIdle: false
+}) : null;
 
-// Test connection
-pool.on('connect', () => {
-  console.log('Connected to PostgreSQL database');
-});
+// Test connection (only if pool exists)
+if (pool) {
+  pool.on('connect', () => {
+    console.log('Connected to PostgreSQL database');
+  });
 
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-  process.exit(-1);
-});
+  pool.on('error', (err) => {
+    console.error('Unexpected error on idle client', err);
+    // Don't exit in serverless environment
+    if (!process.env.VERCEL) {
+      process.exit(-1);
+    }
+  });
+}
 
 // Initialize database tables
 export const initDatabase = async () => {
+  if (!pool) {
+    throw new Error('Database pool is not initialized. DATABASE_URL is required.');
+  }
+  
   try {
     // Test connection first
     console.log('Testing database connection...');
@@ -577,5 +601,8 @@ const seedSampleProducts = async () => {
   }
 };
 
+// Export pool
+// Note: pool will be null if DATABASE_URL is not set
+// Models should check for pool before using it
 export default pool;
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import api from '../config/axios'
+import api from '../../config/axios'
 import { FiUsers, FiPackage, FiShoppingBag, FiDollarSign, FiTrendingUp, FiClock } from 'react-icons/fi'
 
 export default function AdminDashboard() {

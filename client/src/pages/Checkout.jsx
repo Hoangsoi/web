@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../config/axios'
 
 export default function Checkout() {
   const [cart, setCart] = useState(null)
@@ -23,7 +23,7 @@ export default function Checkout() {
 
   const fetchCart = async () => {
     try {
-      const res = await axios.get('/api/cart')
+      const res = await api.get('/api/cart')
       setCart(res.data)
     } catch (error) {
       console.error('Error fetching cart:', error)
@@ -37,7 +37,7 @@ export default function Checkout() {
     setSubmitting(true)
 
     try {
-      await axios.post('/api/orders', {
+      await api.post('/api/orders', {
         shippingAddress,
         paymentMethod
       })

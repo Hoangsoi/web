@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
+import api from '../config/axios'
 import { FiPlus, FiEdit, FiTrash2, FiSearch, FiX } from 'react-icons/fi'
 
 export default function AdminProducts() {
@@ -37,7 +37,7 @@ export default function AdminProducts() {
       })
       if (search) params.append('search', search)
       
-      const res = await axios.get(`/api/admin/products?${params}`)
+      const res = await api.get(`/api/admin/products?${params}`)
       setProducts(res.data.products)
       setTotalPages(res.data.totalPages)
     } catch (error) {
@@ -52,7 +52,7 @@ export default function AdminProducts() {
     if (!confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) return
 
     try {
-      await axios.delete(`/api/admin/products/${id}`)
+      await api.delete(`/api/admin/products/${id}`)
       alert('Xóa sản phẩm thành công!')
       fetchProducts()
     } catch (error) {
@@ -106,10 +106,10 @@ export default function AdminProducts() {
       }
 
       if (editingProduct) {
-        await axios.put(`/api/products/${editingProduct._id}`, productData)
+        await api.put(`/api/products/${editingProduct._id}`, productData)
         alert('Cập nhật sản phẩm thành công!')
       } else {
-        await axios.post('/api/products', productData)
+        await api.post('/api/products', productData)
         alert('Thêm sản phẩm thành công!')
       }
 

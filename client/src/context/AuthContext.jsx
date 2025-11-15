@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
-import axios from 'axios'
+import api from '../config/axios'
 
 export const AuthContext = createContext()
 
@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async (silent = false) => {
     try {
-      const res = await axios.get('/api/auth/me')
+      const res = await api.get('/api/auth/me')
       setUser(res.data)
       // Only set loading to false on initial load, not on silent refreshes
       if (!silent) {
@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
       // Only clear token on non-silent fetches (initial load or explicit refresh)
       if (!silent) {
         localStorage.removeItem('token')
-        delete axios.defaults.headers.common['Authorization']
+        // Token will be cleared on next request
         setLoading(false)
       }
     }
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
       return
     }
 
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    // Token is automatically added by axios interceptor
     fetchUser(false) // Initial load, not silent
     
     // Auto-refresh user data every 3 seconds for real-time updates (silent)
@@ -58,9 +58,8 @@ export const AuthProvider = ({ children }) => {
   }, [user])
 
   const login = async (email, password) => {
-    const res = await axios.post('/api/auth/login', { email, password })
+    const res = await api.post('/api/auth/login', { email, password })
     localStorage.setItem('token', res.data.token)
-    axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`
     // Fetch full user data to ensure all fields are included
     await fetchUser()
     // Return user data with role for navigation (role is already in res.data)
@@ -68,7 +67,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   const register = async (name, email, password, phone, referralCode) => {
-    const res = await axios.post('/api/auth/register', {
+    const res = await api.post('/api/auth/register', {
       name,
       email,
       password,
@@ -76,7 +75,6 @@ export const AuthProvider = ({ children }) => {
       referralCode
     })
     localStorage.setItem('token', res.data.token)
-    axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`
     // Fetch full user data to ensure all fields are included
     await fetchUser()
     return res.data
@@ -84,7 +82,6 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token')
-    delete axios.defaults.headers.common['Authorization']
     setUser(null)
   }
 

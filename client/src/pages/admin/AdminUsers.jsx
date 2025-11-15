@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import api from '../config/axios'
 import { FiSearch, FiEdit } from 'react-icons/fi'
 
 export default function AdminUsers() {
@@ -32,7 +32,7 @@ export default function AdminUsers() {
       if (search) params.append('search', search)
       if (roleFilter) params.append('role', roleFilter)
       
-      const res = await axios.get(`/api/admin/users?${params}`)
+      const res = await api.get(`/api/admin/users?${params}`)
       setUsers(res.data.users)
       setTotalPages(res.data.totalPages)
     } catch (error) {
@@ -72,7 +72,7 @@ export default function AdminUsers() {
         }
       })
 
-      await axios.put(`/api/admin/users/${editingUser._id}`, submitData)
+      await api.put(`/api/admin/users/${editingUser._id}`, submitData)
       alert('Cập nhật người dùng thành công!')
       setShowModal(false)
       setEditingUser(null)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../config/axios'
 
 export default function Cart() {
   const [cart, setCart] = useState(null)
@@ -13,7 +13,7 @@ export default function Cart() {
 
   const fetchCart = async () => {
     try {
-      const res = await axios.get('/api/cart')
+      const res = await api.get('/api/cart')
       setCart(res.data)
     } catch (error) {
       console.error('Error fetching cart:', error)
@@ -24,7 +24,7 @@ export default function Cart() {
 
   const handleRemoveItem = async (itemId) => {
     try {
-      await axios.delete(`/api/cart/${itemId}`)
+      await api.delete(`/api/cart/${itemId}`)
       fetchCart()
     } catch (error) {
       alert('Lỗi khi xóa sản phẩm')
@@ -34,7 +34,7 @@ export default function Cart() {
   const handleUpdateQuantity = async (itemId, newQuantity) => {
     if (newQuantity < 1) return
     try {
-      await axios.put(`/api/cart/${itemId}`, { quantity: newQuantity })
+      await api.put(`/api/cart/${itemId}`, { quantity: newQuantity })
       fetchCart()
     } catch (error) {
       alert('Lỗi khi cập nhật số lượng')

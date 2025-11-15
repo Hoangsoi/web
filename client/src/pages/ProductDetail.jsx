@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useContext } from 'react'
-import axios from 'axios'
+import api from '../config/axios'
 import { AuthContext } from '../context/AuthContext'
 
 export default function ProductDetail() {
@@ -18,7 +18,7 @@ export default function ProductDetail() {
 
   const fetchProduct = async () => {
     try {
-      const res = await axios.get(`/api/products/${id}`)
+      const res = await api.get(`/api/products/${id}`)
       setProduct(res.data)
     } catch (error) {
       console.error('Error fetching product:', error)
@@ -34,7 +34,7 @@ export default function ProductDetail() {
     }
 
     try {
-      await axios.post('/api/cart', {
+      await api.post('/api/cart', {
         productId: product._id,
         quantity
       })

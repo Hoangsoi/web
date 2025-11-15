@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import api from '../config/axios'
 import { FiSearch, FiPlus, FiMinus } from 'react-icons/fi'
 
 export default function AdminTransactions() {
@@ -26,7 +26,7 @@ export default function AdminTransactions() {
   const fetchUsers = async () => {
     try {
       setLoadingUsers(true)
-      const res = await axios.get('/api/admin/users?limit=1000')
+      const res = await api.get('/api/admin/users?limit=1000')
       setUsers(res.data.users || [])
     } catch (error) {
       console.error('Error fetching users:', error)
@@ -45,7 +45,7 @@ export default function AdminTransactions() {
       if (typeFilter) params.append('type', typeFilter)
       if (statusFilter) params.append('status', statusFilter)
       
-      const res = await axios.get(`/api/admin/transactions?${params}`)
+      const res = await api.get(`/api/admin/transactions?${params}`)
       setTransactions(res.data.transactions)
       setTotalPages(res.data.totalPages)
     } catch (error) {
@@ -102,7 +102,7 @@ export default function AdminTransactions() {
         return
       }
 
-      await axios.post('/api/admin/transactions/adjust-balance', {
+      await api.post('/api/admin/transactions/adjust-balance', {
         userId: parseInt(adjustFormData.userId),
         amount: parseFloat(adjustFormData.amount),
         description: adjustFormData.description || `Admin ${adjustType === 'add' ? 'cộng' : 'trừ'} tiền`,

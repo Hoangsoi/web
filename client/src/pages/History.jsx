@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import api from '../config/axios'
 import { FiArrowDownCircle, FiArrowUpCircle } from 'react-icons/fi'
 
 export default function History() {
@@ -12,7 +12,7 @@ export default function History() {
 
   const fetchTransactions = async () => {
     try {
-      const res = await axios.get('/api/transactions')
+      const res = await api.get('/api/transactions')
       setTransactions(res.data)
     } catch (error) {
       console.error('Error fetching transactions:', error)

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import api from '../config/axios'
 import { FiSave, FiPlus, FiX } from 'react-icons/fi'
 
 export default function AdminSettings() {
@@ -17,7 +17,7 @@ export default function AdminSettings() {
 
   const fetchSettings = async () => {
     try {
-      const res = await axios.get('/api/settings')
+      const res = await api.get('/api/settings')
       setSettings({
         referral_code: res.data.referral_code || 'SH6688',
         banner_images: res.data.banner_images || [],
@@ -34,7 +34,7 @@ export default function AdminSettings() {
   const handleSave = async () => {
     try {
       setSaving(true)
-      await axios.put('/api/settings', settings)
+      await api.put('/api/settings', settings)
       alert('Cập nhật cài đặt thành công!')
     } catch (error) {
       console.error('Error saving settings:', error)

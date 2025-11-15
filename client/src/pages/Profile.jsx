@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../config/axios'
 import { AuthContext } from '../context/AuthContext'
 import { FiCreditCard, FiTrendingUp, FiArrowDownCircle, FiArrowUpCircle, FiLogOut } from 'react-icons/fi'
 
@@ -54,7 +54,7 @@ export default function Profile() {
         await fetchUser(false) // Explicit refresh, not silent
       } else {
         // Fallback: fetch directly
-        const response = await axios.get('/api/auth/me')
+        const response = await api.get('/api/auth/me')
         setWalletData({
           balance: response.data.balance || 0,
           commission: response.data.commission || 0
@@ -96,7 +96,7 @@ export default function Profile() {
     }
 
     try {
-      await axios.post('/api/transactions/deposit', {
+      await api.post('/api/transactions/deposit', {
         amount: parseFloat(amount),
         description: 'Nạp tiền vào ví'
       })
@@ -116,7 +116,7 @@ export default function Profile() {
     }
 
     try {
-      await axios.post('/api/transactions/withdraw', {
+      await api.post('/api/transactions/withdraw', {
         amount: parseFloat(amount),
         description: 'Rút tiền từ ví'
       })

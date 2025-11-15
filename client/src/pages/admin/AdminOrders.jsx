@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import api from '../config/axios'
 import { FiSearch } from 'react-icons/fi'
 
 export default function AdminOrders() {
@@ -22,7 +22,7 @@ export default function AdminOrders() {
       })
       if (statusFilter) params.append('status', statusFilter)
       
-      const res = await axios.get(`/api/admin/orders?${params}`)
+      const res = await api.get(`/api/admin/orders?${params}`)
       setOrders(res.data.orders)
       setTotalPages(res.data.totalPages)
     } catch (error) {
@@ -35,7 +35,7 @@ export default function AdminOrders() {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      await axios.put(`/api/admin/orders/${orderId}/status`, { status: newStatus })
+      await api.put(`/api/admin/orders/${orderId}/status`, { status: newStatus })
       alert('Cập nhật trạng thái thành công!')
       fetchOrders()
     } catch (error) {

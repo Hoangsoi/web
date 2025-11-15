@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
+import api from '../config/axios'
 import { FiVolume2, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 
 // Default fallback data
@@ -77,7 +77,7 @@ export default function Home() {
 
   const fetchSettings = async () => {
     try {
-      const res = await axios.get('/api/settings')
+      const res = await api.get('/api/settings')
       if (res.data.banner_images && res.data.banner_images.length > 0) {
         setBanners(res.data.banner_images)
       }
@@ -102,7 +102,7 @@ export default function Home() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('/api/products?limit=40')
+      const res = await api.get('/api/products?limit=40')
       console.log('Products fetched:', res.data)
       if (res.data && res.data.products) {
         setProducts(res.data.products)

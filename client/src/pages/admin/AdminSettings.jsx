@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import api from '../config/axios'
+import api from '../../config/axios'
 import { FiSave, FiPlus, FiX } from 'react-icons/fi'
 
 export default function AdminSettings() {

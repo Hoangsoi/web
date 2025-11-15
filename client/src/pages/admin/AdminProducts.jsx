@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import api from '../config/axios'
+import api from '../../config/axios'
 import { FiPlus, FiEdit, FiTrash2, FiSearch, FiX } from 'react-icons/fi'
 
 export default function AdminProducts() {
